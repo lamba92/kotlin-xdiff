@@ -24,7 +24,6 @@ kotlin {
 fun NamedDomainObjectContainer<KotlinSourceSet>.silenceOptIns() =
     all {
         languageSettings {
-            optIn("kotlin.io.path.ExperimentalPathApi")
             optIn("kotlinx.cinterop.ExperimentalForeignApi")
             optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
         }

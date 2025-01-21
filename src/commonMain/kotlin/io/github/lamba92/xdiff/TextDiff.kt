@@ -1,4 +1,6 @@
-package xdiff
+package io.github.lamba92.xdiff
+
+import kotlinx.serialization.Serializable
 
 
 /**
@@ -10,6 +12,7 @@ package xdiff
  * @property content The textual content of the change.
  * @property type The type of the change, specifying whether it is an addition, deletion, or context.
  */
+@Serializable
 public data class Change(
     val content: String,
     val type: Type
@@ -61,6 +64,7 @@ public data class Change(
  * @property targetLength The number of lines in the target file affected by this hunk.
  * @property changes The list of changes (additions, deletions, modifications) in this hunk.
  */
+@Serializable
 public data class Hunk(
     val sourceStart: Int,
     val sourceLength: Int,
@@ -91,54 +95,21 @@ public data class Hunk(
  *
  * @property hunks The list of hunks that collectively represent the diff.
  */
-public data class Diff(
+@Serializable
+public data class TextDiff(
     val hunks: List<Hunk>
-)
-
-public class HunkBuilder(
-    public var sourceStart: Int? = null,
-    public var sourceLength: Int? = null,
-    public var targetStart: Int? = null,
-    public var targetLength: Int? = null,
 ) {
-    private var isValid = false
-    private val changes: MutableList<Change> = mutableListOf<Change>()
-
-    public fun addChange(change: Change) {
-        changes.add(change)
-        if (change.type == Change.Type.Addition || change.type == Change.Type.Deletion) {
-            isValid = true
-        }
-    }
-
-    public fun addAddition(content: String) {
-        addChange(Change(content, Change.Type.Addition))
-    }
-
-    public fun addDeletion(content: String) {
-        addChange(Change(content, Change.Type.Deletion))
-    }
-
-    public fun addContext(content: String) {
-        addChange(Change(content, Change.Type.Context))
-    }
-
-    public fun addChangeFromString(line: String) {
-        when {
-            line.startsWith("+") -> addAddition(line.drop(1))
-            line.startsWith("-") -> addDeletion(line.drop(1))
-            else -> addContext(line.drop(1))
-        }
-    }
-
-    public fun build(): Hunk {
-        require(isValid) { "A hunk must contain at least one addition or deletion" }
-        return Hunk(
-            sourceStart = requireNotNull(sourceStart) { "sourceStart must be set" },
-            sourceLength = requireNotNull(sourceLength) { "sourceLength must be set" },
-            targetStart = requireNotNull(targetStart) { "targetStart must be set" },
-            targetLength = requireNotNull(targetLength) { "targetLength must be set" },
-            changes = changes.toList()
-        )
+    public companion object {
+        public fun compute(
+            source: String,
+            target: String,
+            settings: TextDiffSettings = TextDiffSettings.DEFAULT
+        ): TextDiff = computeTextDiff(source, target, settings)
     }
 }
+
+public expect fun computeTextDiff(
+    source: String,
+    target: String,
+    settings: TextDiffSettings = TextDiffSettings.DEFAULT
+): TextDiff

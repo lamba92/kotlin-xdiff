@@ -83,6 +83,13 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinx.serialization.json)
+            }
+        }
+
         val jvmCommonMain by creating {
             dependsOn(commonMain.get())
             dependencies {
