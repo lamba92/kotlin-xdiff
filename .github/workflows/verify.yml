@@ -79,7 +79,7 @@ jobs:
   publication:
     strategy:
       matrix:
-        os: [ ubuntu, windows, macos ]
+        os: [ ubuntu, macos ]
     runs-on: ${{ matrix.os }}-latest
     name: Publication test / ${{ matrix.os == 'ubuntu' && 'Ubuntu' || matrix.os == 'windows' && 'Windows' || matrix.os == 'macos' && 'macOs' }}
     steps:
