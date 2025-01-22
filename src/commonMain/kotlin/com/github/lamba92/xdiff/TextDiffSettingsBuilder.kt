@@ -1,4 +1,4 @@
-package io.github.lamba92.xdiff
+package com.github.lamba92.xdiff
 
 /**
  * A builder class for constructing instances of [TextDiffSettings].
@@ -39,7 +39,7 @@ public class TextDiffSettingsBuilder {
     public fun build(): TextDiffSettings =
         TextDiffSettings(
             computation = computation.build(),
-            emission = emission.build()
+            emission = emission.build(),
         )
 }
 
@@ -58,7 +58,6 @@ public class TextDiffSettingsBuilder {
  * @property anchors List of anchor strings to guide the alignment during diff computation.
  */
 public class DiffComputationSettingsBuilder {
-
     public var useMinimal: Boolean =
         DiffComputationSettings.DEFAULT.useMinimal
 
@@ -89,7 +88,6 @@ public class DiffComputationSettingsBuilder {
     public var anchors: List<String> =
         DiffComputationSettings.DEFAULT.anchors
 
-
     public fun build(): DiffComputationSettings =
         DiffComputationSettings(
             useMinimal = useMinimal,
@@ -101,10 +99,9 @@ public class DiffComputationSettingsBuilder {
             algorithm = algorithm,
             useIndentationHeuristic = useIndentationHeuristic,
             ignoreRegex = ignoreRegex,
-            anchors = anchors
+            anchors = anchors,
         )
 }
-
 
 /**
  * Builder class for constructing instances of [DiffEmissionSettings].
@@ -116,12 +113,11 @@ public class DiffComputationSettingsBuilder {
  * @property emitFunctionContext Emit additional context around function names.
  */
 public class DiffEmissionSettingsBuilder {
-
     public var contextLines: Int =
-        DiffEmissionSettings.DEFAULT.contextLines
+        DiffEmissionSettings.DEFAULT.contextLinesCount
 
     public var interHunkContextLines: Int =
-        DiffEmissionSettings.DEFAULT.interHunkContextLines
+        DiffEmissionSettings.DEFAULT.interHunkContextLinesCount
 
     public var emitFunctionNames: Boolean =
         DiffEmissionSettings.DEFAULT.emitFunctionNames
@@ -132,13 +128,12 @@ public class DiffEmissionSettingsBuilder {
     public var emitFunctionContext: Boolean =
         DiffEmissionSettings.DEFAULT.emitFunctionContext
 
-
     public fun build(): DiffEmissionSettings =
         DiffEmissionSettings(
-            contextLines = contextLines,
-            interHunkContextLines = interHunkContextLines,
+            contextLinesCount = contextLines,
+            interHunkContextLinesCount = interHunkContextLines,
             emitFunctionNames = emitFunctionNames,
             suppressHunkHeaders = suppressHunkHeaders,
-            emitFunctionContext = emitFunctionContext
+            emitFunctionContext = emitFunctionContext,
         )
 }

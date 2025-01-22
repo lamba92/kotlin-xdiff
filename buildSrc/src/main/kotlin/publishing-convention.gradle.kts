@@ -9,9 +9,9 @@ plugins {
 }
 
 val javadocJar by tasks.registering(Jar::class) {
-//    dependsOn(tasks.dokkaGeneratePublicationHtml)
+    dependsOn(tasks.dokkaGeneratePublicationHtml)
     archiveClassifier = "javadoc"
-//    from(tasks.dokkaGeneratePublicationHtml)
+    from(tasks.dokkaGeneratePublicationHtml)
     destinationDirectory = layout.buildDirectory.dir("artifacts")
 }
 
@@ -24,9 +24,9 @@ publishing {
     publications.withType<MavenPublication> {
         artifact(javadocJar)
         pom {
-            name = "kotlin-leveldb"
-            description = "LevelDB for Kotlin Multiplatform"
-            url = "https://github.com/lamba92/kotlin-leveldb"
+            name = "kotlin-xdiff"
+            description = "Git's xdiff for Kotlin Multiplatform"
+            url = "https://github.com/lamba92/kotlin-xdiff"
             licenses {
                 license {
                     name = "Apache-2.0"
@@ -41,9 +41,9 @@ publishing {
                 }
             }
             scm {
-                connection = "https://github.com/lamba92/kotlin-leveldb.git"
-                developerConnection = "https://github.com/lamba92/kotlin-leveldb.git"
-                url = "https://github.com/lamba92/kotlin-leveldb.git"
+                connection = "https://github.com/lamba92/kotlin-xdiff.git"
+                developerConnection = "https://github.com/lamba92/kotlin-xdiff.git"
+                url = "https://github.com/lamba92/kotlin-xdiff.git"
             }
         }
     }

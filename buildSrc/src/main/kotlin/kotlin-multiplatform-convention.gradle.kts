@@ -1,10 +1,10 @@
 @file:OptIn(ExperimentalPathApi::class)
 
-import kotlin.io.path.ExperimentalPathApi
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
+import kotlin.io.path.ExperimentalPathApi
 
 plugins {
     kotlin("multiplatform")
@@ -25,7 +25,6 @@ fun NamedDomainObjectContainer<KotlinSourceSet>.silenceOptIns() =
     all {
         languageSettings {
             optIn("kotlinx.cinterop.ExperimentalForeignApi")
-            optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
         }
     }
 

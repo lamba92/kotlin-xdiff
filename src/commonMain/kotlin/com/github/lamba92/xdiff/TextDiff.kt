@@ -1,7 +1,6 @@
-package io.github.lamba92.xdiff
+package com.github.lamba92.xdiff
 
 import kotlinx.serialization.Serializable
-
 
 /**
  * Represents a single change in a diff, encapsulating the content of the change and its type.
@@ -15,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class Change(
     val content: String,
-    val type: Type
+    val type: Type,
 ) {
     /**
      * The type of change.
@@ -34,7 +33,7 @@ public data class Change(
         /**
          * Represents an unchanged context line.
          */
-        Context
+        Context,
     }
 }
 
@@ -70,7 +69,7 @@ public data class Hunk(
     val sourceLength: Int,
     val targetStart: Int,
     val targetLength: Int,
-    val changes: List<Change>
+    val changes: List<Change>,
 )
 
 /**
@@ -97,19 +96,35 @@ public data class Hunk(
  */
 @Serializable
 public data class TextDiff(
-    val hunks: List<Hunk>
+    val hunks: List<Hunk>,
 ) {
     public companion object {
         public fun compute(
             source: String,
             target: String,
-            settings: TextDiffSettings = TextDiffSettings.DEFAULT
-        ): TextDiff = computeTextDiff(source, target, settings)
+            settings: TextDiffSettings = TextDiffSettings.DEFAULT,
+        ): TextDiff =
+            computeTextDiff(
+                source = source,
+                target = target,
+                settings = settings,
+            )
+
+        public fun compute(
+            source: String,
+            target: String,
+            settings: TextDiffSettingsBuilder.() -> Unit,
+        ): TextDiff =
+            computeTextDiff(
+                source = source,
+                target = target,
+                settings = TextDiffSettingsBuilder().apply(settings).build(),
+            )
     }
 }
 
 public expect fun computeTextDiff(
     source: String,
     target: String,
-    settings: TextDiffSettings = TextDiffSettings.DEFAULT
+    settings: TextDiffSettings = TextDiffSettings.DEFAULT,
 ): TextDiff

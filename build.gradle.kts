@@ -5,12 +5,15 @@ plugins {
     `kotlin-multiplatform-with-android-convention`
     `xdiff-binaries`
     id(libs.plugins.ktlint)
+    `publishing-convention`
 }
 
-group = "io.github.lamba92"
+group = "com.github.lamba92"
 version = "1.0-SNAPSHOT"
 
 kotlin {
+
+    jvmToolchain(8)
     jvm()
 
     androidTarget()
@@ -79,7 +82,6 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.kotlinx.serialization.core)
-                api(libs.kotlinx.coroutines.core)
             }
         }
 
@@ -97,15 +99,11 @@ kotlin {
             }
         }
 
-        val jvmCommonTest by creating {
-            dependsOn(commonTest.get())
-        }
-
         androidMain {
             dependsOn(jvmCommonMain)
             dependencies {
                 //noinspection UseTomlInstead
-                api("net.java.dev.jna:jna:5.16.0@aar")
+                api("net.java.dev.jna:jna:${libs.versions.jna.get()}@aar")
             }
         }
 
@@ -116,18 +114,13 @@ kotlin {
             }
         }
 
-        jvmTest {
-            dependsOn(jvmCommonTest)
-        }
-
-        androidUnitTest {
+        androidInstrumentedTest {
             dependencies {
+                implementation(libs.androidx.test.runner)
+                implementation(libs.androidx.test.core)
+                implementation(libs.android.test.junit)
                 implementation(kotlin("test-junit"))
             }
-        }
-
-        androidInstrumentedTest {
-            dependsOn(jvmCommonTest)
         }
     }
 }
@@ -143,17 +136,19 @@ fun KotlinNativeTarget.registerXdiffCinterop(
             dependsOn(tasks.extractXdiffBinariesForKotlinNative, tasks.extractHeaders)
             // the order of the headers matters! put xtypes.h first
             // because it's the one that is used by other headers
-            headers = listOf(
-                "xtypes.h",
-                "git-xdiff.h",
-                "xdiff.h",
-                "xdiffi.h",
-                "xemit.h",
-                "xinclude.h",
-                "xmacros.h",
-                "xprepare.h",
-                "xutils.h"
-            )
+            headers =
+                listOf(
+                    "xtypes.h",
+                    "git-xdiff.h",
+                    "xdiff.h",
+                    "xdiffi.h",
+                    "xemit.h",
+                    "xinclude.h",
+                    "xmacros.h",
+                    "xprepare.h",
+                    "xutils.h",
+                    "helper.h",
+                )
             staticLibs.add("libxdiff.a")
             defFile = layout.buildDirectory.file("generated/cinterop/$defFileName")
             compilerOpts.add(

@@ -1,8 +1,3 @@
-import java.util.Properties
-import kotlin.io.path.Path
-import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
@@ -12,9 +7,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.PluginDependenciesSpecScope
 import org.gradle.kotlin.dsl.registering
 import org.gradle.plugin.use.PluginDependency
+import java.util.Properties
+import kotlin.io.path.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
 
-fun getXdiffBuildLink(version: String) =
-    "https://github.com/lamba92/xdiff-builds/releases/download/$version/xdiff.zip"
+fun getXdiffBuildLink(version: String) = "https://github.com/lamba92/xdiff-builds/releases/download/$version/xdiff.zip"
 
 data class RenamingStrategy(
     val fromPath: String,
@@ -29,6 +28,7 @@ val kotlinNativeRenamings =
         RenamingStrategy("windows/static/x64", "mingw-x64"),
         RenamingStrategy("linux/static/x64", "linux-x64"),
         RenamingStrategy("linux/static/arm64", "linux-arm64"),
+        RenamingStrategy("linux/static/armv7a", "linux-arm32hfp"),
         RenamingStrategy("macosx/static/x86_64", "macos-x64"),
         RenamingStrategy("macosx/static/arm64", "macos-arm64"),
         RenamingStrategy("android/static/arm64", "android-arm64"),
@@ -65,9 +65,7 @@ val jvmRenamings =
         RenamingStrategy("macosx/shared/x86_64", "darwin-x86-64", "dylib"),
     )
 
-fun CopySpec.forPlatform(
-    strategy: RenamingStrategy
-) {
+fun CopySpec.forPlatform(strategy: RenamingStrategy) {
     include(
         buildString {
             append(strategy.fromPath)
@@ -81,7 +79,7 @@ fun CopySpec.forPlatform(
 fun Project.registerExtractXdiffTask(
     downloadXdiffBinaries: TaskProvider<DownloadTask>,
     strategies: List<RenamingStrategy>,
-    destinationDir: Provider<Directory>
+    destinationDir: Provider<Directory>,
 ) = tasks.registering(Sync::class) {
     dependsOn(downloadXdiffBinaries)
     strategies.forEach {

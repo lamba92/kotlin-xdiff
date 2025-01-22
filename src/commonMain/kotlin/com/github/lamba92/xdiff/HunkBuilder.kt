@@ -1,4 +1,4 @@
-package io.github.lamba92.xdiff
+package com.github.lamba92.xdiff
 
 /**
  * A builder class for constructing instances of [Hunk].
@@ -97,7 +97,7 @@ public class HunkBuilder(
             sourceLength = requireNotNull(sourceLength) { "sourceLength must be set" },
             targetStart = requireNotNull(targetStart) { "targetStart must be set" },
             targetLength = requireNotNull(targetLength) { "targetLength must be set" },
-            changes = changes.toList()
+            changes = changes.toList(),
         )
     }
 }

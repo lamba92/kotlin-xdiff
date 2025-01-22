@@ -1,4 +1,4 @@
-package io.github.lamba92.xdiff
+package com.github.lamba92.xdiff
 
 import kotlinx.serialization.Serializable
 
@@ -53,7 +53,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class TextDiffSettings(
     val computation: DiffComputationSettings = DiffComputationSettings.DEFAULT,
-    val emission: DiffEmissionSettings = DiffEmissionSettings.DEFAULT
+    val emission: DiffEmissionSettings = DiffEmissionSettings.DEFAULT,
 ) {
     public companion object {
         /**
@@ -88,7 +88,7 @@ public data class DiffComputationSettings(
     val algorithm: DiffAlgorithm = DiffAlgorithm.MYERS,
     val useIndentationHeuristic: Boolean = false,
     val ignoreRegex: List<String> = emptyList(),
-    val anchors: List<String> = emptyList()
+    val anchors: List<String> = emptyList(),
 ) {
     public companion object {
         public val DEFAULT: DiffComputationSettings = DiffComputationSettings()
@@ -117,7 +117,7 @@ public enum class DiffAlgorithm {
     /**
      * Uses a histogram-based diff algorithm, designed for efficiently handling large inputs.
      */
-    HISTOGRAM
+    HISTOGRAM,
 }
 
 /**
@@ -125,19 +125,19 @@ public enum class DiffAlgorithm {
  *
  * These settings control how differences are formatted and presented in the output.
  *
- * @property contextLines Number of lines of context to include around each hunk of changes.
- * @property interHunkContextLines Number of lines of context to include between hunks.
+ * @property contextLinesCount Number of lines of context to include around each hunk of changes.
+ * @property interHunkContextLinesCount Number of lines of context to include between hunks.
  * @property emitFunctionNames Include function names in the diff output.
  * @property suppressHunkHeaders Suppress headers for each hunk in the diff output.
  * @property emitFunctionContext Emit additional context around function names.
  */
 @Serializable
 public data class DiffEmissionSettings(
-    val contextLines: Int = 3,
-    val interHunkContextLines: Int = 0,
+    val contextLinesCount: Int = 3,
+    val interHunkContextLinesCount: Int = 0,
     val emitFunctionNames: Boolean = true,
     val suppressHunkHeaders: Boolean = false,
-    val emitFunctionContext: Boolean = true
+    val emitFunctionContext: Boolean = true,
 ) {
     public companion object {
         public val DEFAULT: DiffEmissionSettings = DiffEmissionSettings()
@@ -167,7 +167,7 @@ public data class MergeSettings(
     val style: MergeOutputStyle = MergeOutputStyle.DIFF3,
     val ancestor: String? = null,
     val file1Label: String? = null,
-    val file2Label: String? = null
+    val file2Label: String? = null,
 ) {
     public companion object {
         public val DEFAULT: MergeSettings = MergeSettings()
@@ -182,7 +182,7 @@ public enum class MergeSimplificationLevel {
     MINIMAL,
     EAGER,
     ZEALOUS,
-    ZEALOUS_ALNUM
+    ZEALOUS_ALNUM,
 }
 
 /**
@@ -192,7 +192,7 @@ public enum class MergeSimplificationLevel {
 public enum class MergeFavorMode {
     OURS,
     THEIRS,
-    UNION
+    UNION,
 }
 
 /**
@@ -201,5 +201,5 @@ public enum class MergeFavorMode {
 @Serializable
 public enum class MergeOutputStyle {
     DIFF3,
-    ZEALOUS_DIFF3
+    ZEALOUS_DIFF3,
 }

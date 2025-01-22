@@ -2,7 +2,7 @@ import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.tasks.MergeSourceSetFolders
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-val xdiffVersion = "20250120T152756Z"
+val xdiffVersion = "20250122T124532Z"
 
 val downloadXdiffBinaries by tasks.registering(DownloadTask::class) {
     val xdiffVersion = xdiffVersion

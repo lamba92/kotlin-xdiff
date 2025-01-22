@@ -5,7 +5,6 @@ plugins {
 }
 rootProject.name = "kotlin-xdiff"
 
-
 dependencyResolutionManagement {
     repositories {
         google()

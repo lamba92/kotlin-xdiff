@@ -1,14 +1,14 @@
-package io.github.lamba92.xdiff.tests
+package com.github.lamba92.xdiff.tests
 
-import io.github.lamba92.xdiff.TextDiff
-import kotlin.test.Test
+import com.github.lamba92.xdiff.TextDiff
 import kotlinx.serialization.json.Json
+import kotlin.test.Test
 
 class DiffTests {
-
     @Test
     fun simpleText() {
-        val a = """
+        val a =
+            """
             Hello, world!
             this is a test
             of the diff algorithm
@@ -18,9 +18,10 @@ class DiffTests {
             one more line
             3rd line
             4th line
-        """.trimIndent()
+            """.trimIndent()
 
-        val b = """
+        val b =
+            """
             Hello, world!
             this is a test
             of the diff algorithm
@@ -31,7 +32,7 @@ class DiffTests {
             one more line
             A change!
             4th line
-        """.trimIndent()
+            """.trimIndent()
         val json = Json { prettyPrint = true }
         println(json.encodeToString(TextDiff.compute(a, b)))
     }
