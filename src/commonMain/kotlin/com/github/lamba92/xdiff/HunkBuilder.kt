@@ -101,3 +101,13 @@ public class HunkBuilder(
         )
     }
 }
+
+/**
+ * Builds a new instance of [Hunk] using the provided configuration block.
+ *
+ * This method utilizes the [HunkBuilder] to incrementally construct a hunk based on
+ * the changes and metadata applied in the given block. The resulting [Hunk] object
+ * represents a contiguous block of changes in a diff, including additions, deletions,
+ * and context lines.
+ */
+public fun buildHunk(block: HunkBuilder.() -> Unit): Hunk = HunkBuilder().apply(block).build()

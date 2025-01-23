@@ -90,4 +90,4 @@ jobs:
         with:
           distribution: adopt
           java-version: 21
-      - run: ./gradlew publishAllPublicationsToTestRepository --stacktrace
+      - run: ./gradlew publishAllPublicationsToTestRepository

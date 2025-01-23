@@ -4,6 +4,7 @@ import kotlin.io.path.readText
 plugins {
     id("org.jetbrains.dokka")
     id("org.jlleitschuh.gradle.ktlint")
+    id("io.github.gradle-nexus.publish-plugin")
     `maven-publish`
     signing
 }
@@ -69,5 +70,23 @@ tasks {
     // workaround https://github.com/gradle/gradle/issues/26091
     withType<PublishToMavenRepository> {
         dependsOn(withType<Sign>())
+    }
+}
+
+nexusPublishing {
+    // repositoryDescription is used by the nexus publish plugin as identifier
+    // for the repository to publish to.
+    val repoDesc =
+        System.getenv("SONATYPE_REPOSITORY_DESCRIPTION")
+            ?: project.properties["central.sonatype.repositoryDescription"] as? String
+    repoDesc?.let { repositoryDescription = it }
+
+    repositories {
+        sonatype {
+            username = System.getenv("SONATYPE_USERNAME")
+                ?: project.properties["central.sonatype.username"] as? String
+            password = System.getenv("SONATYPE_PASSWORD")
+                ?: project.properties["central.sonatype.password"] as? String
+        }
     }
 }

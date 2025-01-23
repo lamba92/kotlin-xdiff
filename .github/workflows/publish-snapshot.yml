@@ -9,7 +9,7 @@ jobs:
   publish-artifacts:
     strategy:
       matrix:
-        os: [ ubuntu, windows, macos ]
+        os: [ ubuntu, macos ]
     runs-on: ${{ matrix.os }}-latest
     name: "Publish artifacts on ${{ matrix.os }}"
     steps:
