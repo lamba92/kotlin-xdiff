@@ -2,7 +2,7 @@ import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.tasks.MergeSourceSetFolders
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-val xdiffVersion = "20250122T124532Z"
+val xdiffVersion = "20250123T110204Z"
 
 val downloadXdiffBinaries by tasks.registering(DownloadTask::class) {
     val xdiffVersion = xdiffVersion
@@ -29,7 +29,7 @@ val extractXdiffBinariesForAndroidJvm by registerExtractXdiffTask(
     destinationDir = androidLibs,
 )
 
-val extractHeaders by tasks.registering(Sync::class) {
+tasks.register<Sync>("extractHeaders") {
     dependsOn(downloadXdiffBinaries)
     from(zipTree(downloadXdiffBinaries.map { it.downloadFile })) {
         include("**/*.h")

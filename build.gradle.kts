@@ -148,6 +148,7 @@ fun KotlinNativeTarget.registerXdiffCinterop(
                     "xprepare.h",
                     "xutils.h",
                     "helper.h",
+                    "simple.h",
                 )
             staticLibs.add("libxdiff.a")
             defFile = layout.buildDirectory.file("generated/cinterop/$defFileName")
@@ -177,5 +178,11 @@ fun KotlinNativeTarget.registerXdiffCinterop(
         }
         this.packageName = packageName
         definitionFile = generateDefTask.flatMap { it.defFile }
+    }
+}
+
+tasks {
+    clean {
+        delete(".kotlin")
     }
 }
