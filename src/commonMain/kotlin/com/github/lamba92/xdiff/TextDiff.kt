@@ -99,6 +99,20 @@ public data class TextDiff(
     val hunks: List<Hunk>,
 ) {
     public companion object {
+        /**
+         * Computes the differences (diff) between two text inputs.
+         *
+         * This method takes a source string and a target string, compares them, and produces a
+         * structured representation of the differences in the form of a [TextDiff] object.
+         * The comparison behavior can be adjusted by providing specific [settings].
+         *
+         * @param source The original text input to compare.
+         * @param target The modified text input to compare against the source.
+         * @param settings Configuration settings to customize how differences are computed
+         * and presented. Defaults to [TextDiffSettings.DEFAULT].
+         * @return A [TextDiff] object representing the differences between the source and
+         * target strings.
+         */
         public fun compute(
             source: String,
             target: String,
@@ -110,6 +124,15 @@ public data class TextDiff(
                 settings = settings,
             )
 
+        /**
+         * Computes the textual differences between the given source and target strings
+         * based on the configured settings.
+         *
+         * @param source The original source text to compare.
+         * @param target The target text to compare against the source.
+         * @param settings A lambda to configure the settings for the text difference computation.
+         * @return A [TextDiff] object representing the computed differences between the source and target texts.
+         */
         public fun compute(
             source: String,
             target: String,
@@ -123,6 +146,21 @@ public data class TextDiff(
     }
 }
 
+/**
+ * Computes the differences between two text inputs (source and target) and returns
+ * a structured representation of the differences as a [TextDiff] object.
+ *
+ * This function compares the given source and target strings and identifies additions,
+ * deletions, and modifications using the specified [settings]. The resulting [TextDiff]
+ * object organizes the differences into multiple hunks for clear and structured output.
+ *
+ * @param source The original text input to compare.
+ * @param target The modified text input to compare against the source.
+ * @param settings Configuration settings to define how the differences are computed
+ * and presented. Defaults to [TextDiffSettings.DEFAULT].
+ * @return A [TextDiff] object representing the computed differences between the source
+ * and target inputs, organized into hunks.
+ */
 public expect fun computeTextDiff(
     source: String,
     target: String,
