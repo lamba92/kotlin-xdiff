@@ -24,7 +24,7 @@ public class HunkBuilder(
     public var targetLength: Int? = null,
 ) {
     private var isValid = false
-    private val changes: MutableList<Change> = mutableListOf<Change>()
+    private val changes: MutableList<Change> = mutableListOf()
 
     /**
      * Adds a change to the list of changes and updates the validity status of the hunk.
@@ -32,7 +32,7 @@ public class HunkBuilder(
      * @param change The change to be added. It represents a modification, addition, or deletion in the diff.
      */
     public fun addChange(change: Change) {
-        changes.add(change)
+        changes.add(change.copy(content = change.content.removeNewLineSuffix()))
         if (change.type == Change.Type.Addition || change.type == Change.Type.Deletion) {
             isValid = true
         }
@@ -44,7 +44,7 @@ public class HunkBuilder(
      * @param content The content to be added as an addition.
      */
     public fun addAddition(content: String) {
-        addChange(Change(content, Change.Type.Addition))
+        addChange(Change(content.removeNewLineSuffix(), Change.Type.Addition))
     }
 
     /**
@@ -55,7 +55,7 @@ public class HunkBuilder(
      * @param content The content to be marked as deleted.
      */
     public fun addDeletion(content: String) {
-        addChange(Change(content, Change.Type.Deletion))
+        addChange(Change(content.removeNewLineSuffix(), Change.Type.Deletion))
     }
 
     /**
@@ -68,7 +68,7 @@ public class HunkBuilder(
      * @param content The content of the context line to be added.
      */
     public fun addContext(content: String) {
-        addChange(Change(content, Change.Type.Context))
+        addChange(Change(content.removeNewLineSuffix(), Change.Type.Context))
     }
 
     /**
@@ -101,6 +101,14 @@ public class HunkBuilder(
         )
     }
 }
+
+// removes \n and \r\n suffixes from the string
+private fun String.removeNewLineSuffix() =
+    when {
+        endsWith("\n") -> dropLast(1)
+        endsWith("\r\n") -> dropLast(2)
+        else -> this
+    }
 
 /**
  * Builds a new instance of [Hunk] using the provided configuration block.

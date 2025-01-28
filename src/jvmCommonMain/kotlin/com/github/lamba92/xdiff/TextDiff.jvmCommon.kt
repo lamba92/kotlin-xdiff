@@ -48,11 +48,6 @@ public fun imperativeTextDiff(
             xemitconf = emissionSettings,
         ) ?: error("Error while computing diff")
 
-    val text1Lines = LinesIndex(source)
-    val text2Lines = LinesIndex(target)
-    var sourceIndex = 0
-    var targetIndex = 0
-
     val hunks =
         buildList {
             val hunksCount = LibXDiff.xdiff_result_get_hunk_count(result)
@@ -77,30 +72,8 @@ public fun imperativeTextDiff(
                             val line =
                                 LibXDiff.xdiff_hunk_get_line_at(hunkPointer, j.toLong())
                                     ?: error("Invalid line index $j for hunk $i")
-                            when {
-                                line.startsWith("-") -> {
-                                    val content =
-                                        text1Lines[sourceIndex]
-                                            ?: error("Invalid source index: $sourceIndex")
-                                    addDeletion(content)
-                                    sourceIndex++
-                                }
-                                line.startsWith("+") -> {
-                                    val content =
-                                        text2Lines[targetIndex]
-                                            ?: error("Invalid target index: $targetIndex")
-                                    addAddition(content)
-                                    targetIndex++
-                                }
-                                else -> {
-                                    val content =
-                                        text1Lines[sourceIndex]
-                                            ?: error("Invalid source index: $sourceIndex")
-                                    addContext(content)
-                                    sourceIndex++
-                                    targetIndex++
-                                }
-                            }
+                            println(line)
+                            addChangeFromString(line)
                         }
                     }
 

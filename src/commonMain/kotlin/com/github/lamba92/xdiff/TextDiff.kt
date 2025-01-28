@@ -166,3 +166,36 @@ public expect fun computeTextDiff(
     target: String,
     settings: TextDiffSettings = TextDiffSettings.DEFAULT,
 ): TextDiff
+
+/**
+ * Converts this hunk into a Git-style diff string representation.
+ *
+ * This function constructs a string that represents the hunk in the format typically
+ * used by Git for unified diffs. The format includes the hunk header followed by the
+ * changes, where:
+ * - Lines starting with "+" indicate additions.
+ * - Lines starting with "-" indicate deletions.
+ * - Lines starting with a space indicate context/unchanged lines.
+ *
+ * Example output for a hunk could look like:
+ * ```
+ * @@ -1,3 +1,3 @@
+ *  Line 1
+ * -Removed line
+ * +Added line
+ *  Line 3
+ * ```
+ *
+ * @return The Git-style diff string representation of the hunk.
+ */
+public fun Hunk.toGitDiffString(): String =
+    buildString {
+        appendLine("@@ -$sourceStart,$sourceLength +$targetStart,$targetLength @@")
+        changes.forEach { change ->
+            when (change.type) {
+                Change.Type.Addition -> appendLine("+${change.content}")
+                Change.Type.Deletion -> appendLine("-${change.content}")
+                Change.Type.Context -> appendLine(" ${change.content}")
+            }
+        }
+    }
