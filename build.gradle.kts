@@ -1,9 +1,7 @@
-import org.gradle.internal.extensions.stdlib.capitalized
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+@file:Suppress("OPT_IN_USAGE", "DEPRECATION")
 
 plugins {
     `kotlin-multiplatform-with-android-convention`
-    `xdiff-binaries`
     id(libs.plugins.ktlint)
     `publishing-convention`
 }
@@ -16,66 +14,40 @@ kotlin {
     jvmToolchain(8)
     jvm()
 
+    wasmJs {
+        browser()
+        nodejs()
+    }
+    js {
+        browser()
+        nodejs()
+    }
+
     androidTarget()
 
-    androidNativeX64 {
-        registerXdiffCinterop("android-x64")
-    }
+    androidNativeX64()
+    androidNativeArm64()
+    androidNativeArm32()
+    androidNativeX86()
 
-    androidNativeArm64 {
-        registerXdiffCinterop("android-arm64")
-    }
+    macosX64()
+    macosArm64()
 
-    androidNativeArm32 {
-        registerXdiffCinterop("android-arm32")
-    }
-    androidNativeX86 {
-        registerXdiffCinterop("android-x86")
-    }
+    linuxX64()
+    linuxArm64()
+    linuxArm32Hfp()
 
-    macosX64 {
-        registerXdiffCinterop("macos-x64")
-    }
-    macosArm64 {
-        registerXdiffCinterop("macos-arm64")
-    }
+    iosArm64()
+    iosX64()
+    iosSimulatorArm64()
 
-    linuxX64 {
-        registerXdiffCinterop("linux-x64")
-    }
-    linuxArm64 {
-        registerXdiffCinterop("linux-arm64")
-    }
+    tvosArm64()
+    tvosX64()
+    tvosSimulatorArm64()
 
-    iosArm64 {
-        registerXdiffCinterop("ios-arm64")
-    }
-    iosX64 {
-        registerXdiffCinterop("ios-simulator-x64")
-    }
-    iosSimulatorArm64 {
-        registerXdiffCinterop("ios-simulator-arm64")
-    }
-
-    tvosArm64 {
-        registerXdiffCinterop("tvos-arm64")
-    }
-    tvosX64 {
-        registerXdiffCinterop("tvos-simulator-x64")
-    }
-    tvosSimulatorArm64 {
-        registerXdiffCinterop("tvos-simulator-arm64")
-    }
-
-    watchosArm64 {
-        registerXdiffCinterop("watchos-arm64")
-    }
-    watchosX64 {
-        registerXdiffCinterop("watchos-simulator-x64")
-    }
-    watchosSimulatorArm64 {
-        registerXdiffCinterop("watchos-simulator-arm64")
-    }
+    watchosArm64()
+    watchosX64()
+    watchosSimulatorArm64()
 
     sourceSets {
 
@@ -92,28 +64,6 @@ kotlin {
             }
         }
 
-        val jvmCommonMain by creating {
-            dependsOn(commonMain.get())
-            dependencies {
-                compileOnly(libs.jna)
-            }
-        }
-
-        androidMain {
-            dependsOn(jvmCommonMain)
-            dependencies {
-                //noinspection UseTomlInstead
-                api("net.java.dev.jna:jna:${libs.versions.jna.get()}@aar")
-            }
-        }
-
-        jvmMain {
-            dependsOn(jvmCommonMain)
-            dependencies {
-                api(libs.jna)
-            }
-        }
-
         androidInstrumentedTest {
             dependencies {
                 implementation(libs.androidx.test.runner)
@@ -122,62 +72,6 @@ kotlin {
                 implementation(kotlin("test-junit"))
             }
         }
-    }
-}
-
-fun KotlinNativeTarget.registerXdiffCinterop(
-    platformName: String,
-    packageName: String = "xdiff",
-    generateDefTaskName: String = "generate${platformName.toCamelCase().capitalized()}XdiffDefFile",
-    defFileName: String = "${platformName.toCamelCase()}.def",
-) {
-    val generateDefTask =
-        tasks.register<CreateDefFileTask>(generateDefTaskName) {
-            dependsOn(tasks.extractXdiffBinariesForKotlinNative, tasks.extractHeaders)
-            // the order of the headers matters! put xtypes.h first
-            // because it's the one that is used by other headers
-            headers =
-                listOf(
-                    "xtypes.h",
-                    "git-xdiff.h",
-                    "xdiff.h",
-                    "xdiffi.h",
-                    "xemit.h",
-                    "xinclude.h",
-                    "xmacros.h",
-                    "xprepare.h",
-                    "xutils.h",
-                    "helper.h",
-                    "simple.h",
-                )
-            staticLibs.add("libxdiff.a")
-            defFile = layout.buildDirectory.file("generated/cinterop/$defFileName")
-            compilerOpts.add(
-                tasks
-                    .extractHeaders
-                    .map { "-I${it.destinationDir.absolutePath}" },
-            )
-            libraryPaths.add(
-                tasks
-                    .extractXdiffBinariesForKotlinNative
-                    .map { it.destinationDir.resolve(platformName).absolutePath },
-            )
-        }
-
-    val compilation = compilations.getByName("main")
-
-    compilation.compileTaskProvider {
-        dependsOn(generateDefTask)
-    }
-
-    compilation.cinterops.register("libleveldb") {
-        tasks.all {
-            if (name == interopProcessingTaskName) {
-                dependsOn(generateDefTask)
-            }
-        }
-        this.packageName = packageName
-        definitionFile = generateDefTask.flatMap { it.defFile }
     }
 }
 

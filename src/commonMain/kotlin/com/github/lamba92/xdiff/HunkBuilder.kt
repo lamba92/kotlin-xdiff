@@ -23,17 +23,18 @@ public class HunkBuilder(
     public var targetStart: Int? = null,
     public var targetLength: Int? = null,
 ) {
-    private var isValid = false
-    private val changes: MutableList<Change> = mutableListOf()
+    public var isValid: Boolean = false
+        private set
+    private val lines: MutableList<Line> = mutableListOf()
 
     /**
      * Adds a change to the list of changes and updates the validity status of the hunk.
      *
-     * @param change The change to be added. It represents a modification, addition, or deletion in the diff.
+     * @param line The change to be added. It represents a modification, addition, or deletion in the diff.
      */
-    public fun addChange(change: Change) {
-        changes.add(change.copy(content = change.content.removeNewLineSuffix()))
-        if (change.type == Change.Type.Addition || change.type == Change.Type.Deletion) {
+    public fun addChange(line: Line) {
+        lines.add(line.copy(content = line.content.removeNewLineSuffix()))
+        if (line.type == Line.Type.Addition || line.type == Line.Type.Deletion) {
             isValid = true
         }
     }
@@ -44,7 +45,7 @@ public class HunkBuilder(
      * @param content The content to be added as an addition.
      */
     public fun addAddition(content: String) {
-        addChange(Change(content.removeNewLineSuffix(), Change.Type.Addition))
+        addChange(Line(content.removeNewLineSuffix(), Line.Type.Addition))
     }
 
     /**
@@ -55,7 +56,7 @@ public class HunkBuilder(
      * @param content The content to be marked as deleted.
      */
     public fun addDeletion(content: String) {
-        addChange(Change(content.removeNewLineSuffix(), Change.Type.Deletion))
+        addChange(Line(content.removeNewLineSuffix(), Line.Type.Deletion))
     }
 
     /**
@@ -68,7 +69,7 @@ public class HunkBuilder(
      * @param content The content of the context line to be added.
      */
     public fun addContext(content: String) {
-        addChange(Change(content.removeNewLineSuffix(), Change.Type.Context))
+        addChange(Line(content.removeNewLineSuffix(), Line.Type.Context))
     }
 
     /**
@@ -97,12 +98,21 @@ public class HunkBuilder(
             sourceLength = requireNotNull(sourceLength) { "sourceLength must be set" },
             targetStart = requireNotNull(targetStart) { "targetStart must be set" },
             targetLength = requireNotNull(targetLength) { "targetLength must be set" },
-            changes = changes.toList(),
+            lines = lines.toList(),
         )
     }
 }
 
-// removes \n and \r\n suffixes from the string
+/**
+ * Removes a newline suffix from the string.
+ *
+ * This function checks if the string ends with a newline character (`\n`) or a carriage return
+ * followed by a newline (`\r\n`) and removes that suffix, if present.
+ * If the string has no newline suffix, it returns the string unchanged.
+ *
+ * @receiver The string from which the newline suffix should be removed.
+ * @return A string with the newline suffix removed, if it was present.
+ */
 private fun String.removeNewLineSuffix() =
     when {
         endsWith("\n") -> dropLast(1)
@@ -113,7 +123,7 @@ private fun String.removeNewLineSuffix() =
 /**
  * Builds a new instance of [Hunk] using the provided configuration block.
  *
- * This method utilizes the [HunkBuilder] to incrementally construct a hunk based on
+ * This method uses the [HunkBuilder] to incrementally construct a hunk based on
  * the changes and metadata applied in the given block. The resulting [Hunk] object
  * represents a contiguous block of changes in a diff, including additions, deletions,
  * and context lines.

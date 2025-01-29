@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @property type The type of the change, specifying whether it is an addition, deletion, or context.
  */
 @Serializable
-public data class Change(
+public data class Line(
     val content: String,
     val type: Type,
 ) {
@@ -46,7 +46,7 @@ public data class Change(
  *
  * - The starting line in the source ([sourceStart]) and its length ([sourceLength]).
  * - The starting line in the target ([targetStart]) and its length ([targetLength]).
- * - A list of [changes] within the hunk.
+ * - A list of [lines] within the hunk.
  *
  * For example, a unified diff hunk may look like this:
  * ```
@@ -61,7 +61,7 @@ public data class Change(
  * @property sourceLength The number of lines in the source file affected by this hunk.
  * @property targetStart The starting line number in the target file for this hunk.
  * @property targetLength The number of lines in the target file affected by this hunk.
- * @property changes The list of changes (additions, deletions, modifications) in this hunk.
+ * @property lines The list of changes (additions, deletions, modifications) in this hunk.
  */
 @Serializable
 public data class Hunk(
@@ -69,7 +69,7 @@ public data class Hunk(
     val sourceLength: Int,
     val targetStart: Int,
     val targetLength: Int,
-    val changes: List<Change>,
+    val lines: List<Line>,
 )
 
 /**
@@ -104,68 +104,22 @@ public data class TextDiff(
          *
          * This method takes a source string and a target string, compares them, and produces a
          * structured representation of the differences in the form of a [TextDiff] object.
-         * The comparison behavior can be adjusted by providing specific [settings].
          *
          * @param source The original text input to compare.
          * @param target The modified text input to compare against the source.
-         * @param settings Configuration settings to customize how differences are computed
-         * and presented. Defaults to [TextDiffSettings.DEFAULT].
          * @return A [TextDiff] object representing the differences between the source and
          * target strings.
          */
         public fun compute(
             source: String,
             target: String,
-            settings: TextDiffSettings = TextDiffSettings.DEFAULT,
         ): TextDiff =
             computeTextDiff(
                 source = source,
                 target = target,
-                settings = settings,
-            )
-
-        /**
-         * Computes the textual differences between the given source and target strings
-         * based on the configured settings.
-         *
-         * @param source The original source text to compare.
-         * @param target The target text to compare against the source.
-         * @param settings A lambda to configure the settings for the text difference computation.
-         * @return A [TextDiff] object representing the computed differences between the source and target texts.
-         */
-        public fun compute(
-            source: String,
-            target: String,
-            settings: TextDiffSettingsBuilder.() -> Unit,
-        ): TextDiff =
-            computeTextDiff(
-                source = source,
-                target = target,
-                settings = TextDiffSettingsBuilder().apply(settings).build(),
             )
     }
 }
-
-/**
- * Computes the differences between two text inputs (source and target) and returns
- * a structured representation of the differences as a [TextDiff] object.
- *
- * This function compares the given source and target strings and identifies additions,
- * deletions, and modifications using the specified [settings]. The resulting [TextDiff]
- * object organizes the differences into multiple hunks for clear and structured output.
- *
- * @param source The original text input to compare.
- * @param target The modified text input to compare against the source.
- * @param settings Configuration settings to define how the differences are computed
- * and presented. Defaults to [TextDiffSettings.DEFAULT].
- * @return A [TextDiff] object representing the computed differences between the source
- * and target inputs, organized into hunks.
- */
-public expect fun computeTextDiff(
-    source: String,
-    target: String,
-    settings: TextDiffSettings = TextDiffSettings.DEFAULT,
-): TextDiff
 
 /**
  * Converts this hunk into a Git-style diff string representation.
@@ -191,11 +145,11 @@ public expect fun computeTextDiff(
 public fun Hunk.toGitDiffString(): String =
     buildString {
         appendLine("@@ -$sourceStart,$sourceLength +$targetStart,$targetLength @@")
-        changes.forEach { change ->
+        lines.forEach { change ->
             when (change.type) {
-                Change.Type.Addition -> appendLine("+${change.content}")
-                Change.Type.Deletion -> appendLine("-${change.content}")
-                Change.Type.Context -> appendLine(" ${change.content}")
+                Line.Type.Addition -> appendLine("+${change.content}")
+                Line.Type.Deletion -> appendLine("-${change.content}")
+                Line.Type.Context -> appendLine(" ${change.content}")
             }
         }
     }
