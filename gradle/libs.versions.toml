@@ -1,16 +1,16 @@
 [versions]
 androidx-test-core = "1.6.1"
 android-test-junit = "1.2.1"
-jna = "5.16.0"
+jna = "5.17.0"
 nexus-publish-plugin = "2.0.0"
 android-gradle-plugin = "8.9.0"
 dokka = "2.0.0"
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 kotlinx-coroutines = "1.10.1"
 kotlinx-datetime = "0.6.2"
 kotlinx-serialization = "1.8.0"
 ktlint-gradle = "12.2.0"
-ktor = "3.1.0"
+ktor = "3.1.1"
 androidx-test-runner = "1.6.2"
 
 [libraries]
